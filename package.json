@@ -1,0 +1,14 @@
+{
+  "name": "rm_mongo",
+  "version": "1.0.0",
+  "description": "\"learning to handel mongoDb\"",
+  "main": "server.js",
+  "scripts": {
+    "test": "\"-tt\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.1.13"
+  }
+}
