@@ -29,6 +29,17 @@
       res.status(400).send(er);
     });
   })
+  app.get('/todos', (req,res) => {
+    Todo.find().then((docs) => {
+      console.log(docs)
+      res.send({
+        todos: docs
+      });
+    }, (err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+  });
   app.listen(3000, () => {
     console.log('Server up on port 3000')
   })

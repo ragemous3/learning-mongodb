@@ -1,6 +1,6 @@
   const mongoose = require('mongoose');
 
-  var Todo = mongoose.model('Todo',{
+  var Todo = mongoose.model('Todo',{//'Todo' är här connectionen till kollektionen "Todo"
 
     text:{
       type: String,
