@@ -28,7 +28,7 @@
       //res.status(400) om bad request.
       res.status(400).send(er);
     });
-  })
+  });
   app.get('/todos', (req,res) => {
     Todo.find().then((docs) => {
       console.log(docs)
