@@ -1,3 +1,4 @@
+  const {ObjectID} = require('mongodb');
   var {mongoose} = require('./db/mongoose.js')//./ <-- i samma mapp.
   var {Todo} = require('./models/todo.js')//./ <-- i samma mapp.
   var {User} = require('./models/user.js')//./ <-- i samma mapp.
@@ -7,7 +8,7 @@
   var app = express();
 
   app.use(bodyParser.json(), (req,res,next) => {
-    console.log('Someone is connecting directly to this server!')
+    console.log('Master! Someone is connecting directly to this server!')
     next();
   })
   app.get('/', () => {
@@ -39,6 +40,25 @@
       console.log(err);
       res.status(400).send(err);
     });
+  });
+  app.get('/todos/:id', (req,res) => {
+    var id = req.params.id;
+      if(!ObjectID.isValid(id)){
+        console.log('Wrong id sent to server');
+        res.status(404).send();
+        return;
+      }
+      Todo.findById(id).then((doc) => {
+        if(!doc){
+          res.status(404).send();
+          return;
+        }
+      res.send({doc});
+    }).catch(err => {
+      console.log(err)
+      //400 - bad request.
+      res.status(400).send();
+    })
   });
   app.listen(3000, () => {
     console.log('Server up on port 3000')
