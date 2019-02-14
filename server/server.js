@@ -1,3 +1,4 @@
+  require('./config/config');
   const {ObjectID} = require('mongodb');
   var {mongoose} = require('./db/mongoose.js')//./ <-- i samma mapp.
   var {Todo} = require('./models/todo.js')//./ <-- i samma mapp.
@@ -6,7 +7,7 @@
   var bodyParser = require('body-parser');
 
   var app = express();
-  var port = process.env.PORT || 3000;
+  var port = process.env.PORT;
   //Man använder bodyparser för att plocka ut key=values ur URLEN.
   app.use(bodyParser.json(), (req,res,next) => {
     console.log('Master! Someone is connecting directly to this server!')
