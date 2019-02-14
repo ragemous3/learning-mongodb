@@ -80,8 +80,32 @@
       //400 bad request
       res.status(400).send(e);
     })
-
   })
+  app.patch('/todos/:id', (req,res) => {
+    var id = req.params.id;
+    var body = {text: req.body.text, completed: req.body.completed};
+    //I bodyN av request är var någonstans som uppdateringen kommer att lagras.
+      if(!ObjectID.isValid(id)){
+        res.status(404).send();
+        return;
+      }
+      if(typeof body.completed === "boolean"){
+        body.completedAt = new Date().getTime();
+        }else{
+          body.completed = false;
+          body.completedAt = null;
+        }
+        //$set (ändra något)//new:true säger till db att skicka tillbaka det som ska uppdateras
+          Todo.findByIdAndUpdate(id, {$set: body},{new:true})
+          .then((doc) => {
+            if(!doc){
+              res.status(404).send();
+            }
+            res.status(200).send({doc});
+          }).catch((err) => {
+            res.status(400).send(err)
+          });
+      })
   app.listen(port, () => {
     console.log('Server up on port 3000')
   })
