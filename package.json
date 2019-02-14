@@ -4,7 +4,11 @@
   "description": "\"learning to handel mongoDb\"",
   "main": "server.js",
   "scripts": {
+    "start":"node server/server.js",
     "test": "\"-tt\""
+  },
+  "engine":{
+    "node":"11.8.0"
   },
   "author": "",
   "license": "ISC",

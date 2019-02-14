@@ -6,7 +6,8 @@
   var bodyParser = require('body-parser');
 
   var app = express();
-
+  var port = process.env.PORT || 3000;
+  //Man använder bodyparser för att plocka ut key=values ur URLEN.
   app.use(bodyParser.json(), (req,res,next) => {
     console.log('Master! Someone is connecting directly to this server!')
     next();
@@ -60,7 +61,7 @@
       res.status(400).send();
     })
   });
-  app.listen(3000, () => {
+  app.listen(port, () => {
     console.log('Server up on port 3000')
   })
 /*
