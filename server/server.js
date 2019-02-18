@@ -107,6 +107,33 @@
             res.status(400).send(err)
           });
       })
+
+  app.post('/users', (req,res) => {
+
+      if(!req.body.password || !req.body.email){
+        req.status(400).send(`Your email or password is not typed in correctly`);
+        return;
+      }
+      var body = {
+        email: req.body.email,
+        password: req.body.password
+       }
+      var user = new User(body);
+
+    user.save().then(() => {
+      return user.generateAuthToken();
+    }).then((token) => {
+      /*
+        Man skickar user för att user innehåller värdefull information
+        som man kan använda på sidan.
+        för att sätta en custom header så prefixar man the key med x-auth.
+        */
+          res.header('x-auth', token).send(user.toJson());
+      }).catch((err) => {
+       res.status(400).send(err);
+        });
+      });
+
   app.listen(port, () => {
     console.log('Server up on port 3000')
   })
