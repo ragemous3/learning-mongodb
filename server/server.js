@@ -5,10 +5,11 @@
   var {User} = require('./models/user.js')//./ <-- i samma mapp.
   var express = require('express');
   var bodyParser = require('body-parser');
+  var {authenticate} = require('./middleware/authenticate')
 
   var app = express();
   var port = process.env.PORT;
-  //Man använder bodyparser för att plocka ut key=values ur URLEN.
+          //Man använder bodyparser för att plocka ut key=values ur URLEN.
   app.use(bodyParser.json(), (req,res,next) => {
     console.log('Master! Someone is connecting directly to this server!')
     next();
@@ -128,11 +129,15 @@
         som man kan använda på sidan.
         för att sätta en custom header så prefixar man the key med x-auth.
         */
-          res.header('x-auth', token).send(user.toJson());
+          res.header('x-auth', token).send(user.toJSON());
       }).catch((err) => {
        res.status(400).send(err);
         });
       });
+
+      app.get('/users/me', authenticate, (req, res) => {
+        res.send(req.user);
+      })
 
   app.listen(port, () => {
     console.log('Server up on port 3000')

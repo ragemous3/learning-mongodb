@@ -30,7 +30,28 @@
       }]
   })
   //methods är ett "objekt"
-  userSchema.methods.toJson = function (){
+
+  userSchema.statics.findByToken = function(token){
+    var User = this;
+    var decoded;
+    try{
+      decoded = jwt.verify(token, 'abc123');
+    }catch{
+      console.log('Token has been manipulated!');
+      return new Promise((resolve,reject) => {
+        reject();
+      })
+      //return Promise.reject();
+    }
+    return User.findOne({
+      '_id': decoded._id,
+      'tokens.access':'auth',
+      'tokens.token':token
+    })
+  };
+
+
+  userSchema.methods.toJSON = function (){
     var user = this;
     var userObj = user.toObject();
 
