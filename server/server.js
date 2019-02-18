@@ -9,6 +9,15 @@
   var bcrypt = require('bcryptjs');
   var app = express();
   var port = process.env.PORT;
+
+  /*
+  BUGGAR!
+    Det finns några buggar.... ? Det är dålig error-handling i någon av
+    routesen.
+  BUGGAR?
+  /users/login lagrar dubbla nyklar på mongodb.
+
+  */
           //Man använder bodyparser för att plocka ut key=values ur URLEN.
   app.use(bodyParser.json(), (req,res,next) => {
     console.log('Master! Someone is connecting directly to this server!')
@@ -119,21 +128,28 @@
         email: req.body.email,
         password: req.body.password
        }
-      var user = new User(body);
+      var test = User.findOne({
+        email: body.email
+      })
 
-    user.save().then(() => {
-      return user.generateAuthToken();
-    }).then((token) => {
-      /*
-        Man skickar user för att user innehåller värdefull information
-        som man kan använda på sidan.
-        för att sätta en custom header så prefixar man the key med x-auth.
-        */
-          res.header('x-auth', token).send(user.toJSON());
-      }).catch((err) => {
-       res.status(400).send(err);
-        });
-      });
+      if(test !== null){
+        var user = new User(body);
+        user.save().then(() => {
+          return user.generateAuthToken();
+        }).then((token) => {
+          /*
+            Man skickar user för att user innehåller värdefull information
+            som man kan använda på sidan.
+            för att sätta en custom header så prefixar man the key med x-auth.
+            */
+              res.header('x-auth', token).send(user.toJSON());
+          }).catch((err) => {
+           res.status(400).send(err);
+            });
+      }else{
+        res.status(400).send('You do already have an account here!')
+      }
+    });
 
     app.get('/users/me', authenticate, (req, res) => {
       res.send(req.user);
@@ -152,6 +168,14 @@
       })
     })
 
+    app.delete('/users/me/token', authenticate, (req,res) => {
+      req.user.removeToken(req.token).then((res) => {
+        console.log(res);
+        res.status(200).send();
+      }).catch((err) => {
+        res.status(401).send();
+    })
+    })
   app.listen(port, () => {
     console.log('Server up on port 3000')
   })

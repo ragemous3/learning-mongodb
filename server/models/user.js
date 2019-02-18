@@ -116,6 +116,19 @@
     });
   };
 
+  userSchema.methods.removeToken = function(token){
+    var user = this;
+     //$pull awesome mongoose-metod för att ta bort skit från DB!!!
+    return user.updateOne({
+       $pull: {
+         tokens: {token}
+       }
+     }).then((res) => {
+       resolve(res);
+     }).catch((err) => {
+       reject()
+     })
+  }
 
   var User = mongoose.model('User', userSchema);
 
