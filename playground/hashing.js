@@ -1,13 +1,15 @@
 const {SHA256} = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 //one-way algorithm. Man får alltid samma hash tillbaka.
-//salt?
 
-var data = {
-  id:1
-}
-const token = jwt.sign(data, 'abc123');
-const decoded = jwt.verify(data, 'abc123');
+
+
+// var data = {
+//   id:1
+// }
+// const token = jwt.sign(data, 'abc123');
+// const decoded = jwt.verify(data, 'abc123');
 
 // var message = 'iamuser3';
 //

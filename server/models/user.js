@@ -1,6 +1,7 @@
   const mongoose = require('mongoose');
   const validator = require('validator');
   const jwt = require('jsonwebtoken')
+  const bcrypt = require('bcryptjs');
   var userSchema = new mongoose.Schema({
     email:{
       type:String,
@@ -70,9 +71,27 @@
       return token;
     }); //applicerar förändringar till databasen.
   };
-  //en instans av en model kallas för "dokument"
-  //första argumentet är vilken collection jag vill lägga något
+
+  userSchema.pre('save', function(next) {
+    var user = this;
+    let pw = user.password;
+    if(user.isModified('password')){
+      bcrypt.genSalt(10, function(err,salt){
+        bcrypt.hash(user.password, salt, function(err, hash){
+          user.password = hash;
+          next();
+        })
+      }, (err) => {
+        console.log('unable to salt pw!')
+      })
+    } else{
+      next();
+    }
+  })
   var User = mongoose.model('User', userSchema);
+
+
+
   module.exports = {User};
 
 
