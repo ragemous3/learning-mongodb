@@ -11,9 +11,7 @@
           req.token = token;
           //**************
           res.send(user)
-
           next();
-
         }).catch((err) => {
           res.status(400).send(err);
         })

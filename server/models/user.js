@@ -52,6 +52,7 @@
   };
 
 
+  //change original mongoose toJSON-method to only return certain values.
   userSchema.methods.toJSON = function (){
     var user = this;
     var userObj = user.toObject();
@@ -88,6 +89,34 @@
       next();
     }
   })
+  userSchema.statics.findTokenOnLogin = function(loginInfo){
+    var User = this;
+    return User.findOne({
+      'email': loginInfo.email
+    }).then((user) => {
+        if(!user){
+          return Promise.reject();
+        }
+        //returnerar en promise för bättre chain brah.
+        /*
+          Skriver du reject kommer en chain någonstans att faila och gå till catch. Skriver
+          du resolve kommer den köra nästa "then". I alla chains är resolve, eller reject
+          sista biten man ska göra. Därför kan det vara aktuellt att returnera nya promises.
+        */
+        return new Promise((resolve,reject) => {
+          bcrypt.compare(loginInfo.pw, user.password, (err, res) => {
+                if(res){
+                  resolve(user);
+                }else{
+                  reject();
+                }
+            });
+        });
+
+    });
+  };
+
+
   var User = mongoose.model('User', userSchema);
 
 

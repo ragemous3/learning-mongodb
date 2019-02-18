@@ -6,7 +6,7 @@
   var express = require('express');
   var bodyParser = require('body-parser');
   var {authenticate} = require('./middleware/authenticate')
-
+  var bcrypt = require('bcryptjs');
   var app = express();
   var port = process.env.PORT;
           //Man använder bodyparser för att plocka ut key=values ur URLEN.
@@ -135,9 +135,22 @@
         });
       });
 
-      app.get('/users/me', authenticate, (req, res) => {
-        res.send(req.user);
+    app.get('/users/me', authenticate, (req, res) => {
+      res.send(req.user);
+    })
+
+    app.post('/users/login', (req,res) => {
+      var loginInfo = {email: req.body.email, pw: req.body.password};
+      User.findTokenOnLogin(loginInfo).then((user) => {
+        //eftersom att man kallar på skiten genom modellen
+        //"User" så kommer denna callback bli en instans av User.
+        return user.generateAuthToken().then((token) => {
+          res.header('x-auth', token).send(user);
+        });
+      }).catch((err) => {
+          res.status(400).send(`Wrong user or password ${err}`);
       })
+    })
 
   app.listen(port, () => {
     console.log('Server up on port 3000')
